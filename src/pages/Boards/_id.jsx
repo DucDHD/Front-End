@@ -11,7 +11,7 @@ function Board() {
   const [board, setBoard] = useState(null)
 
   useEffect(() => {
-    const boardId = '69d6163b94607dc5b354ac18'
+    const boardId = '69d77e2cf7f701c87b45fdbc'
     fetchBoardDetailAPI(boardId).then(board => {
       setBoard(board)
     })
