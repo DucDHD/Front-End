@@ -19,7 +19,8 @@ import ListCard from './ListCard/ListCard'
 import { mapOrder } from '~/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-
+import TextField from '@mui/material/TextField'
+import CloseIcon from '@mui/icons-material/Close'
 
 function Column( { column } ) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -44,6 +45,18 @@ function Column( { column } ) {
     setAnchorEl(null)
   }
   const cardOrderedCards = mapOrder( column?.cards, column?.cardOrderIds, '_id' )
+
+  const [openNewCardFrom, setOpenNewcardFrom] = useState(false)
+  const toggleOpenNewcardFrom = () => setOpenNewcardFrom(!openNewCardFrom)
+  const [newCardTitle, setNewCardTitle] = useState('')
+
+  const addNewCard = () => {
+    if (!newCardTitle) {
+      return
+    }
+    //console.log(newCardTitle)
+    toggleOpenNewcardFrom()
+  }
 
   return (
     <div
@@ -127,15 +140,77 @@ function Column( { column } ) {
         {/* {Box Footer } */}
         <Box sx={{
           height: (theme) => theme.trello.columnFooterHeight,
-          p: 2,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between'
+          p: 2
         }}>
-          <Button startIcon={<AddCardIcon/>}>Add New Card </Button>
-          <Tooltip title = "Drag to move">
-            <DragHandleIcon sx={{ cursor: 'pointer' }} />
-          </Tooltip>
+          {!openNewCardFrom
+            ? <Box sx ={{
+              height:'100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent:'space-between'
+            }} >
+              <Button startIcon={<AddCardIcon/>} onClick={toggleOpenNewcardFrom} >Add New Card </Button>
+              <Tooltip title = "Drag to move">
+                <DragHandleIcon sx={{ cursor: 'pointer' }} />
+              </Tooltip>
+            </Box>
+            : <Box sx={{
+              height:'100%',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1
+            }}
+            >
+              <TextField
+                label="Enter Card title..."
+                type="text"
+                size="small"
+                variant='outlined'
+                autoFocus
+                data-no-dnd="True"
+                value={newCardTitle}
+                onChange={ (e) => setNewCardTitle(e.target.value) }
+                sx={{
+                  '& label': { color: 'text.primary' },
+                  '& input': {
+                    color: (theme) => theme.palette.primary.main,
+                    bdcolor: (theme) => (theme.palette.mode === 'dark' ? '#333643' : 'white')
+                  },
+                  '& label.Mui-focused': { color: (theme) => theme.palette.primary.main },
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': { borderColor:  (theme) => theme.palette.primary.main },
+                    '&:hover fieldset': { borderColor:  (theme) => theme.palette.primary.main },
+                    '&:Mui-focused fieldset': { borderColor:  (theme) => theme.palette.primary.main }
+                  },
+                  '& .MuiOutlinedInput-input' : { borderRadius: 1 }
+                }}
+              />
+              <Box sx={{ display: 'flex', alignItems:'center', gap:1 }} >
+                <Button
+                  className="interceptor-loading"
+                  data-no-dnd="True"
+                  onClick={addNewCard}
+                  variant='contained'color='success' size='small'
+                  sx={{
+                    boxShadow:'none',
+                    border:'0.5px solid',
+                    borderColor: (theme) => theme.palette.success.main,
+                    '&:hover': { bgcolor: (theme) => theme.palette.success.light }
+                  }}
+                >Add </Button>
+                <CloseIcon
+                  fontSize='small'
+                  sx={{
+                    color: (theme) => theme.palette.warning.light,
+                    cursor: 'pointer',
+                    '&:hover': { color: (theme) => theme.palette.warning.light }
+                  }}
+                  onClick= {toggleOpenNewcardFrom}
+                />
+              </Box>
+            </Box>
+          }
+
         </Box>
       </Box>
     </div>
