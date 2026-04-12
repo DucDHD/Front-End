@@ -9,17 +9,23 @@ import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
 
 
-function ListColumns({ columns }) {
+function ListColumns({ columns, createNewColumn, createNewCard }) {
   const [openNewColumnFrom, setOpenNewColumnFrom] = useState(false)
   const toggleOpenNewColumnFrom = () => { setOpenNewColumnFrom(!openNewColumnFrom) }
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error('please enter column Title!')
       return
     }
-    //console.log(newColumnTitle)
+
+    // create Column call API
+    const newColumnData = {
+      title: newColumnTitle
+    }
+    await createNewColumn(newColumnData)
+
     toggleOpenNewColumnFrom()
     setNewColumnTitle('')
 
@@ -36,7 +42,7 @@ function ListColumns({ columns }) {
         overflowY: 'hidden',
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-        {columns?.map(column => <Column key={column._id} column={column} /> )}
+        {columns?.map(column => <Column key={column._id} column={column} createNewCard={createNewCard} /> )}
         {/* Box Add New Column */}
         { !openNewColumnFrom
           ? <Box onClick={toggleOpenNewColumnFrom} sx={{
