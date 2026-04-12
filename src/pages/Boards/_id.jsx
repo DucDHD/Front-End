@@ -3,7 +3,7 @@ import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
-import { mockData } from '~/apis/mock-data'
+//import { mockData } from '~/apis/mock-data'
 import { useEffect, useState } from 'react'
 import { fetchBoardDetailAPI } from '~/apis'
 
@@ -11,7 +11,7 @@ function Board() {
   const [board, setBoard] = useState(null)
 
   useEffect(() => {
-    const boardId = '69d77e2cf7f701c87b45fdbc'
+    const boardId = '69da6421f25145129f644c30'
     fetchBoardDetailAPI(boardId).then(board => {
       setBoard(board)
     })
@@ -20,8 +20,8 @@ function Board() {
   return (
     <Container disableGutters maxWidth={false} sx ={{ height: '100vh' }} >
       <AppBar />
-      <BoardBar board={mockData.board} />
-      <BoardContent board={mockData.board} />
+      <BoardBar board={board} />
+      <BoardContent board={board} />
     </Container>
   )
 }
