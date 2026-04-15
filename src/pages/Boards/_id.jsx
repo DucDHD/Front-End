@@ -1,22 +1,24 @@
+import { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import AppBar from '~/components/AppBar/AppBar'
 import BoardBar from './BoardBar/BoardBar'
 import BoardContent from './BoardContent/BoardContent'
 //import { mockData } from '~/apis/mock-data'
-import { useEffect, useState } from 'react'
 import { fetchBoardDetailAPI,
   createNewColumnAPI,
   createNewCardAPI,
   UpdateBoardDetailAPI,
   UpdateColumnDetailAPI,
-  moveCardToDifferentColumnAPI
+  moveCardToDifferentColumnAPI,
+  deleteColumnDetailAPI
 } from '~/apis'
 import { generatePlaceHolderCard } from '~/utils/formatters'
 import { isEmpty } from 'lodash'
 import { mapOrder } from '~/utils/sorts'
 import CircularProgress from '@mui/material/CircularProgress'
 import { Typography } from '@mui/material'
+import { toast } from 'react-toastify'
 
 function Board() {
   const [board, setBoard] = useState(null)
@@ -61,12 +63,9 @@ function Board() {
       ...newCardData,
       boardId: board._id
     })
-    console.log('createdCard', createdCard)
-
     // updata state board
     const newBoard = { ...board }
     const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
-    console.log('🚀 ~ createNewCard ~ columnToUpdate:', columnToUpdate)
     if (columnToUpdate) {
       if (columnToUpdate.cards.some(card => card.FE_placeholderCard)) {
         columnToUpdate.cards = [createdCard]
@@ -121,6 +120,14 @@ function Board() {
       nextColumnId,
       nextCardOrderIds:  dndOrderedColumns.find( column => column._id === nextColumnId)?.cardOrderIds
     })
+  }
+  const deleteColumnDetails = (columnId) => {
+    const newBoard = { ...board }
+    newBoard.columns = newBoard.columns.filter(column => column._id !== columnId )
+    newBoard.columnOrderIds = newBoard.columnOrderIds.filter( _id => _id !== columnId )
+    setBoard(newBoard)
+    deleteColumnDetailAPI(columnId)
+      .then( res => { toast.success(res?.deleteResult) } )
 
   }
 
@@ -150,6 +157,7 @@ function Board() {
         moveColumn={moveColumn}
         moveCardInTheSameColumn={moveCardInTheSameColumn}
         moveCardToDifferentColumns={moveCardToDifferentColumns}
+        deleteColumnDetails={deleteColumnDetails}
       />
     </Container>
   )
