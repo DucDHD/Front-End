@@ -8,9 +8,15 @@ export const fetchBoardDetailAPI = async (boardId) => {
   return response.data
 }
 
-/** Board APIS */
+/** Update Board APIS */
 export const UpdateBoardDetailAPI = async (boardId, updateData) => {
   const response = await axios.put(`${API_ROOT}/v1/boards/${boardId}`, updateData)
+  return response.data
+}
+
+/** Update Board APIS */
+export const moveCardToDifferentColumnAPI = async ( updateData) => {
+  const response = await axios.put(`${API_ROOT}/v1/boards/supports/moving_card`, updateData)
   return response.data
 }
 
@@ -19,6 +25,13 @@ export const createNewColumnAPI = async (newColumnData) => {
   const response = await axios.post(`${API_ROOT}/v1/columns`, newColumnData)
   return response.data
 }
+
+/** Update Column APIS */
+export const UpdateColumnDetailAPI = async (columnId, updateData) => {
+  const response = await axios.put(`${API_ROOT}/v1/columns/${columnId}`, updateData)
+  return response.data
+}
+
 
 /** Card APIS */
 export const createNewCardAPI = async (newCardData) => {
