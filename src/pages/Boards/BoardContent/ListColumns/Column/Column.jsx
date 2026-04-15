@@ -16,7 +16,6 @@ import Tooltip from '@mui/material/Tooltip'
 import Typography from '@mui/material/Typography'
 import { useState } from 'react'
 import ListCard from './ListCard/ListCard'
-import { mapOrder } from '~/utils/sorts'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import TextField from '@mui/material/TextField'
@@ -45,13 +44,13 @@ function Column( { column, createNewCard } ) {
   const handleClose = () => {
     setAnchorEl(null)
   }
-  const cardOrderedCards = mapOrder( column?.cards, column?.cardOrderIds, '_id' )
+  const cardOrderedCards = column.cards
 
   const [openNewCardFrom, setOpenNewcardFrom] = useState(false)
   const toggleOpenNewcardFrom = () => setOpenNewcardFrom(!openNewCardFrom)
   const [newCardTitle, setNewCardTitle] = useState('')
 
-  const addNewCard = async () => {
+  const addNewCard = () => {
     if (!newCardTitle) {
       toast.error('please enter card!', {
         position: 'bottom-right'
@@ -63,7 +62,7 @@ function Column( { column, createNewCard } ) {
       columnId: column._id
     }
 
-    await createNewCard(newCardData)
+    createNewCard(newCardData)
 
     //console.log(newCardTitle)
     toggleOpenNewcardFrom()
