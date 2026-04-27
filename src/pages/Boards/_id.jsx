@@ -135,6 +135,7 @@ function Board() {
     return (
       <Box sx={{
         display: 'flex',
+        flexDirection: 'column',
         alignItems:'center',
         justifyContent: 'center',
         gap: 2,
@@ -142,7 +143,12 @@ function Board() {
         height: '100vh'
       }}>
         <CircularProgress />
-        <Typography>loading...</Typography>
+        <Typography>
+          The system is restarting, please wait a moment
+        </Typography>
+        <Typography>
+          Loading...
+        </Typography>
       </Box>
     )
   }
