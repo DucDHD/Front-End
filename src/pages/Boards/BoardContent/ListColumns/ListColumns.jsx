@@ -7,14 +7,21 @@ import NoteAddIcon from '@mui/icons-material/NoteAdd'
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable'
 import CloseIcon from '@mui/icons-material/Close'
 import { useState } from 'react'
+import { createNewColumnAPI } from '~/apis'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { generatePlaceHolderCard } from '~/utils/formatters'
+import { cloneDeep } from 'lodash'
 
+function ListColumns({ columns }) {
+  const board = useSelector(selectCurrentActiveBoard)
+  const disPatch = useDispatch()
 
-function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDetails }) {
   const [openNewColumnFrom, setOpenNewColumnFrom] = useState(false)
   const toggleOpenNewColumnFrom = () => { setOpenNewColumnFrom(!openNewColumnFrom) }
   const [newColumnTitle, setNewColumnTitle] = useState('')
 
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error('please enter column Title!')
       return
@@ -24,7 +31,18 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
     const newColumnData = {
       title: newColumnTitle
     }
-    createNewColumn(newColumnData)
+    // Call API create new column
+    const createdColumn = await createNewColumnAPI({
+      ...newColumnData,
+      boardId: board._id
+    })
+    createdColumn.cards = [generatePlaceHolderCard(createdColumn)]
+    createdColumn.cardOrderIds = [generatePlaceHolderCard(createdColumn)._id]
+    // updata state board
+    const newBoard = cloneDeep(board)
+    newBoard.columns.push(createdColumn)
+    newBoard.columnOrderIds.push(createdColumn._id)
+    disPatch(updateCurrentActiveBoard(newBoard))
 
     toggleOpenNewColumnFrom()
     setNewColumnTitle('')
@@ -42,7 +60,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
         overflowY: 'hidden',
         '&::-webkit-scrollbar-track': { m: 2 }
       }}>
-        {columns?.map(column => <Column key={column._id} column={column} createNewCard={createNewCard} deleteColumnDetails={deleteColumnDetails} /> )}
+        {columns?.map(column => <Column key={column._id} column={column} /> )}
         {/* Box Add New Column */}
         { !openNewColumnFrom
           ? <Box onClick={toggleOpenNewColumnFrom} sx={{
@@ -79,6 +97,7 @@ function ListColumns({ columns, createNewColumn, createNewCard, deleteColumnDeta
             gap: 1
           }}>
             <TextField
+              id="input-add-new-column"
               label="Enter column title..."
               type="text"
               size="small"
