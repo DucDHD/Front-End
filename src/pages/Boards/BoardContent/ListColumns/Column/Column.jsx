@@ -22,8 +22,17 @@ import TextField from '@mui/material/TextField'
 import CloseIcon from '@mui/icons-material/Close'
 import { toast } from 'react-toastify'
 import { useConfirm } from 'material-ui-confirm'
+import { createNewCardAPI, deleteColumnDetailAPI } from '~/apis'
+import { useDispatch, useSelector } from 'react-redux'
+import { updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
+import { cloneDeep } from 'lodash'
 
-function Column({ column, createNewCard, deleteColumnDetails }) {
+
+function Column({ column }) {
+
+  const board = useSelector(selectCurrentActiveBoard)
+  const disPatch = useDispatch()
+
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: column._id,
     data: { ...column }
@@ -51,7 +60,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
   const toggleOpenNewcardFrom = () => setOpenNewcardFrom(!openNewCardFrom)
   const [newCardTitle, setNewCardTitle] = useState('')
 
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('please enter card!', {
         position: 'bottom-right'
@@ -63,7 +72,23 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       columnId: column._id
     }
 
-    createNewCard(newCardData)
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id
+    })
+    // updata state board
+    const newBoard = cloneDeep(board)
+    const columnToUpdate = newBoard.columns.find(column => column._id === createdCard.columnId)
+    if (columnToUpdate) {
+      if (columnToUpdate.cards.some(card => card.FE_placeholderCard)) {
+        columnToUpdate.cards = [createdCard]
+        columnToUpdate.cardOrderIds = [createdCard._id]
+      } else {
+        columnToUpdate.cards.push(createdCard)
+        columnToUpdate.cardOrderIds.push(createdCard._id)
+      }
+    }
+    disPatch(updateCurrentActiveBoard(newBoard))
 
     //console.log(newCardTitle)
     toggleOpenNewcardFrom()
@@ -79,7 +104,16 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
       cancellationText: 'Cancel'
     })
       .then( () => {
-        deleteColumnDetails(column._id)
+
+        const newBoard = { ...board }
+        newBoard.columns = newBoard.columns.filter(c => c._id !== column._id )
+        newBoard.columnOrderIds = newBoard.columnOrderIds.filter( _id => _id !== column._id )
+
+        disPatch(updateCurrentActiveBoard(newBoard))
+
+        deleteColumnDetailAPI(column._id).then( res => {
+          toast.success(res?.deleteResult)
+        })
       })
       .catch(() => {})
   }
@@ -164,7 +198,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
                 <ListItemText>Archive this Column</ListItemText>
               </MenuItem>
               <MenuItem
-              onClick={handleDeleteColumn}
+                onClick={handleDeleteColumn}
                 sx={{
                   '&:hover': {
                     color: 'warning.dark',
@@ -204,6 +238,7 @@ function Column({ column, createNewCard, deleteColumnDetails }) {
             }}
             >
               <TextField
+                id="input-add-new-card"
                 label="Enter Card title..."
                 type="text"
                 size="small"

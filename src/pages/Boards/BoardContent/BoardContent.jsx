@@ -33,12 +33,9 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 function BoardContent({
   board,
-  createNewColumn,
-  createNewCard,
   moveColumn,
   moveCardInTheSameColumn,
-  moveCardToDifferentColumns,
-  deleteColumnDetails
+  moveCardToDifferentColumns
 }) {
 
   //const poinTerSensor = useSensor(PointerSensor, { activationConstraint: { distance: 10 } })
@@ -270,12 +267,7 @@ function BoardContent({
         height: (theme) => theme.trello.boardContentHeight,
         p: '10px 0'
       }}>
-        <ListColumns
-          columns={orderedColumnsState}
-          createNewColumn={createNewColumn}
-          createNewCard={createNewCard}
-          deleteColumnDetails={deleteColumnDetails}
-        />
+        <ListColumns columns={orderedColumnsState} />
         <DragOverlay dropAnimation={dropAnimation}>
           {(!activeDragItemType) && null}
           {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && <Column column={activeDragItemData} /> }
