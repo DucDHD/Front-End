@@ -15,17 +15,19 @@ import { Typography } from '@mui/material'
 import { fetchBoardDetailAPI, updateCurrentActiveBoard, selectCurrentActiveBoard } from '~/redux/activeBoard/activeBoardSlice'
 import { useDispatch, useSelector } from 'react-redux'
 import { cloneDeep } from 'lodash'
+import { useParams } from 'react-router-dom'
 
 function Board() {
   //const [board, setBoard] = useState(null)
   const disPatch = useDispatch()
   const board = useSelector(selectCurrentActiveBoard)
 
+  const { boardId } = useParams()
+
   useEffect(() => {
-    const boardId = '69db6d428c4c11f2ddee5d9f'
     // CALL API
     disPatch(fetchBoardDetailAPI(boardId))
-  }, [disPatch])
+  }, [disPatch, boardId])
 
 
   const moveColumn = (dndOrderedColumns) => {
