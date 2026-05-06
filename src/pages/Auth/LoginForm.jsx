@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Avatar from '@mui/material/Avatar'
@@ -19,8 +19,16 @@ import {
   PASSWORD_RULE_MESSAGE
 } from '~/utils/validators'
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
+import { useDispatch } from 'react-redux'
+import { loginUserAPI } from '~/redux/user/userSlice'
+import { useSearchParams, useNavigate} from 'react-router-dom'
+import { toast } from 'react-toastify'
+
 
 function LoginForm() {
+
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const { register, handleSubmit, formState: { errors } } = useForm()
 
@@ -30,7 +38,13 @@ function LoginForm() {
   const verifiedEmail = searchParams.get('verifiedEmail')
 
   const submitLogIn = (data) => {
-    console.log('submit login data', data)
+    const { email, password } = data
+    toast.promise(
+      dispatch(loginUserAPI({ email, password })),
+      { pending: 'loging in...' }
+    ).then( res => {
+      if (!res.error) navigate('/')
+    })
   }
 
   return (
