@@ -21,12 +21,11 @@ import {
 import FieldErrorAlert from '~/components/Form/FieldErrorAlert'
 import { useDispatch } from 'react-redux'
 import { loginUserAPI } from '~/redux/user/userSlice'
-import { useSearchParams, useNavigate} from 'react-router-dom'
+import { useSearchParams, useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 
 
 function LoginForm() {
-
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
