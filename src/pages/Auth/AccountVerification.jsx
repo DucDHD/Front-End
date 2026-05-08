@@ -18,7 +18,6 @@ function AccountVerification() {
   useEffect(() => {
     if (email && token) {
       verifyUserAPI({ email, token })
-      console.log('vao verifyUserAPI')
         .then( () => {
           setVerified(true)
         })
@@ -32,6 +31,7 @@ function AccountVerification() {
   if (!verified) {
     return <PageLoadingSpinner alert="verifying your account..." />
   }
+  console.log('Ready to navigate')
 
   return <Navigate to={`/login?verifiedEmail=${email}`} />
 }
