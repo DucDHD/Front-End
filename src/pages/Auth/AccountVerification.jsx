@@ -29,8 +29,6 @@ function AccountVerification() {
   if (!verified) {
     return <PageLoadingSpinner alert="verifying your account..." />
   }
-  console.log('Ready to navigate')
-
   return <Navigate to={`/login?verifiedEmail=${email}`} />
 }
 
