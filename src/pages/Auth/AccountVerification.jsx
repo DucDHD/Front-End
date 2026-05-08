@@ -9,6 +9,8 @@ function AccountVerification() {
 
   // get date from URL
   const { email, token } = Object.fromEntries([...searchParams])
+  console.log('email', email )
+  console.log('token', token )
 
   const [verified, setVerified] = useState(false)
 
@@ -16,6 +18,7 @@ function AccountVerification() {
   useEffect(() => {
     if (email && token) {
       verifyUserAPI({ email, token })
+      console.log('vao verifyUserAPI')
         .then( () => {
           setVerified(true)
         })
