@@ -18,6 +18,10 @@ import { BrowserRouter } from 'react-router-dom'
 import { PersistGate } from 'redux-persist/integration/react'
 import { persistStore } from 'redux-persist'
 
+// config Inject Store
+import { injectStore } from '~/utils/authorizeAxios'
+injectStore(store)
+
 let persistor = persistStore(store)
 
 ReactDOM.createRoot(document.getElementById('root')).render(
